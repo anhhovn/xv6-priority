@@ -88,6 +88,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = 10;
 
   release(&ptable.lock);
 
@@ -532,3 +533,34 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+int ppr(int pid, int priority){
+   struct proc *p;
+   acquire(&ptable.lock);
+   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->pid == pid){
+         p->priority=priority;
+         break;
+       }
+    }
+   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == SLEEPING)
+	  cprintf("%s \t %d \t SLEEPING \t priority: %d \n ", p->name,p->pid,p->priority);
+	else if(p->state == RUNNING)
+ 	  cprintf("%s \t %d \t RUNNING \t priority: %d \n ", p->name,p->pid,p->priority);
+	else if(p->state == RUNNABLE)
+ 	  cprintf("%s \t %d \t RUNNABLE \t priority: %d \n ", p->name,p->pid,p->priority);
+    } 
+
+    release(&ptable.lock);
+    return pid;
+}
+
+uint32_t prng(uint32_t state[]){
+	uint32_t x = state[0];
+	x ^= x << 13;
+	x ^= x >> 17;
+	x ^= x << 5;
+	state[0] = x;
+	return x;
+}	

@@ -42,6 +42,11 @@ sys_getpid(void)
   return myproc()->pid;
 }
 
+int 
+sys_getpriority(void)
+{
+  return myproc()->priority;
+}
 int
 sys_sbrk(void)
 {
@@ -76,7 +81,22 @@ sys_sleep(void)
   release(&tickslock);
   return 0;
 }
+int sys_ppr(void){
+   int pid, pr;
+   if(argint(0,&pid)<0)
+   	return -1;
+   if(argint(1,&pr)<0)
+   	return -1;
+  return ppr(pid, pr);
+}
 
+uint32_t sys_prng(void){
+	uint32_t state[2];
+	//if(argint(0, (int) state[0]) < 0)
+	//	return -1;
+	
+	return prng(state);
+}
 // return how many clock tick interrupts have occurred
 // since start.
 int
